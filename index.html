@@ -46,6 +46,9 @@ th { color:var(--sub); font-weight:normal; }
 .guide p, .guide li { font-size:.9rem; color:#c8ccd6; }
 .guide ul, .guide ol { margin:6px 0 6px 22px; }
 .guide code { background:#2f3440; padding:1px 6px; border-radius:4px; font-size:.85em; }
+.guidelinks li { margin:6px 0; }
+.guidelinks a { color:#8fd39a; text-decoration:none; font-size:.93rem; }
+.guidelinks a:hover { text-decoration:underline; }
 footer { margin-top:46px; padding-top:16px; border-top:1px solid var(--line); color:var(--sub); font-size:.78rem; }
 [data-lang="en"] { display:none; }
 html[lang="en"] [data-lang="en"] { display:revert; }
@@ -124,6 +127,15 @@ html[lang="en"] [data-lang="ja"] { display:none; }
 <h3>Is this safe?</h3>
 <p>All parsing happens in your browser with JavaScript, and no jar ever leaves your machine. Only the text metadata inside the jar (mods.toml / fabric.mod.json and friends) is read — no code from the jar is executed.</p>
 </div>
+
+
+<h2><span data-lang="ja">解説記事</span><span data-lang="en">Guides</span></h2>
+<ul class="guidelinks">
+  <li><a href="guides/crash-on-startup/"><span data-lang="ja">Modを入れたらMinecraftが起動しない — 原因の切り分けと直し方</span><span data-lang="en">Minecraft won&#x27;t launch after installing mods — how to find the cause</span></a></li>
+  <li><a href="guides/loaders/"><span data-lang="ja">Forge / NeoForge / Fabric / Quilt の違いと選び方</span><span data-lang="en">Forge vs NeoForge vs Fabric vs Quilt — which loader should you use?</span></a></li>
+  <li><a href="guides/mods-folder/"><span data-lang="ja">modsフォルダの場所と、Modの正しい入れ方</span><span data-lang="en">Where the mods folder is, and how to install mods correctly</span></a></li>
+  <li><a href="guides/crash-report/"><span data-lang="ja">クラッシュレポートの読み方 — 原因のModを特定する</span><span data-lang="en">How to read a Minecraft crash report and find the guilty mod</span></a></li>
+</ul>
 
 <h2><span data-lang="ja">対応フォーマット</span><span data-lang="en">Supported formats</span></h2>
 <ul>
