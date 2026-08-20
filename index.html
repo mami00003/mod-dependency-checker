@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Mod依存関係チェッカー | Mod Dependency Checker</title>
+<meta name="description" content="Minecraft Modのjarファイルをドロップするだけで、対応バージョン・モッドローダー・前提Mod（依存関係）を一括チェック。クラッシュ原因の「前提Mod不足」「バージョン違い」「ローダー混在」をインストール前に発見できる無料ツール。Drop your .jar files to check loaders, versions and missing dependencies.">
+<meta name="keywords" content="minecraft,mod,dependency,checker,forge,neoforge,fabric,quilt,crash,前提mod,マイクラ,クラッシュ,起動しない">
+<meta property="og:title" content="Minecraft Mod依存関係チェッカー | Mod Dependency Checker">
+<meta property="og:description" content="jarをドロップするだけで前提Mod不足・バージョン違い・ローダー混在を診断。ブラウザ内で完結、アップロードなし。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%235ac46a'/><path d='M8 11h16M8 16h16M8 21h10' stroke='%231a1c22' stroke-width='3' stroke-linecap='round'/></svg>">
+<style>
+:root { --bg:#1a1c22; --card:#242730; --acc:#5ac46a; --warn:#e8b34b; --err:#e86a5a; --tx:#e8e8ec; --sub:#9aa0ad; --line:#333a46; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Hiragino Sans","Noto Sans JP",Meiryo,system-ui,sans-serif; background:var(--bg); color:var(--tx); line-height:1.75; }
+.wrap { max-width:880px; margin:0 auto; padding:20px 16px 60px; }
+.topbar { display:flex; justify-content:flex-end; margin-bottom:8px; }
+.langbtn { background:var(--card); color:var(--sub); border:1px solid var(--line); border-radius:99px; padding:5px 14px; font-size:.8rem; cursor:pointer; font-family:inherit; }
+.langbtn:hover { color:var(--tx); border-color:var(--acc); }
+h1 { font-size:1.5rem; margin:4px 0 6px; line-height:1.35; }
+.lead { color:var(--sub); font-size:.92rem; margin-bottom:20px; }
+#drop { border:3px dashed #4a5060; border-radius:14px; padding:44px 20px; text-align:center; cursor:pointer; transition:.2s; background:var(--card); }
+#drop.hover { border-color:var(--acc); background:#28352b; }
+#drop b { color:var(--acc); font-size:1.05rem; }
+#drop .sub { color:var(--sub); font-size:.85rem; margin-top:6px; }
+input[type=file] { display:none; }
+.mod { background:var(--card); border-radius:12px; padding:16px 18px; margin-top:14px; }
+.mod h2 { font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.badge { font-size:.72rem; padding:2px 8px; border-radius:99px; background:#39404f; color:var(--tx); white-space:nowrap; }
+.badge.loader { background:#3b4a6b; }
+.badge.ver { background:#3b5b46; }
+table { width:100%; border-collapse:collapse; margin-top:10px; font-size:.88rem; }
+th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+th { color:var(--sub); font-weight:normal; }
+.ok { color:var(--acc); } .warn { color:var(--warn); } .err { color:var(--err); }
+#summary { margin-top:18px; padding:14px 18px; border-radius:12px; background:var(--card); display:none; border-left:4px solid var(--acc); }
+#summary h2 { font-size:1rem; margin-bottom:6px; }
+#summary div { margin:4px 0; font-size:.9rem; }
+.actions { display:none; gap:10px; margin-top:12px; }
+.actions button { background:var(--card); color:var(--tx); border:1px solid var(--line); border-radius:8px; padding:7px 14px; font-size:.85rem; cursor:pointer; font-family:inherit; }
+.actions button:hover { border-color:var(--acc); }
+.guide { margin-top:40px; }
+.guide h2 { font-size:1.15rem; margin:28px 0 8px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+.guide h3 { font-size:.98rem; margin:18px 0 4px; color:var(--acc); }
+.guide p, .guide li { font-size:.9rem; color:#c8ccd6; }
+.guide ul, .guide ol { margin:6px 0 6px 22px; }
+.guide code { background:#2f3440; padding:1px 6px; border-radius:4px; font-size:.85em; }
+footer { margin-top:46px; padding-top:16px; border-top:1px solid var(--line); color:var(--sub); font-size:.78rem; }
+[data-lang="en"] { display:none; }
+html[lang="en"] [data-lang="en"] { display:revert; }
+html[lang="en"] [data-lang="ja"] { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar"><button class="langbtn" id="lang">English / 日本語</button></div>
+
+<h1><span data-lang="ja">Minecraft Mod依存関係チェッカー</span><span data-lang="en">Minecraft Mod Dependency Checker</span></h1>
+<p class="lead">
+  <span data-lang="ja">Modのjarファイルをここにドロップするだけで、<b>対応Minecraftバージョン・モッドローダー（Forge / NeoForge / Fabric / Quilt）・前提Mod</b>をその場で解析します。ファイルはブラウザ内だけで処理され、どこにもアップロードされません。</span>
+  <span data-lang="en">Drop your mod <b>.jar</b> files here to instantly see the <b>Minecraft version, mod loader (Forge / NeoForge / Fabric / Quilt) and required dependencies</b> of each one. Everything runs inside your browser — no uploads, no server.</span>
+</p>
+
+<div id="drop">
+  <div><b data-lang="ja">ここにjarをドロップ</b><b data-lang="en">Drop your .jar files here</b></div>
+  <div class="sub">
+    <span data-lang="ja">またはクリックして選択（複数まとめてOK）— すべてブラウザ内で処理されます</span>
+    <span data-lang="en">or click to browse (multiple files OK) — processed locally in your browser</span>
+  </div>
+  <input type="file" id="file" multiple accept=".jar,.zip">
+</div>
+
+<div id="results"></div>
+<div id="summary"></div>
+<div class="actions" id="actions">
+  <button id="copy"><span data-lang="ja">結果をコピー</span><span data-lang="en">Copy report</span></button>
+  <button id="reset"><span data-lang="ja">クリア</span><span data-lang="en">Clear</span></button>
+</div>
+
+<div class="guide">
+
+<h2><span data-lang="ja">結果の読み方</span><span data-lang="en">How to read the results</span></h2>
+<div data-lang="ja">
+<h3>前提Mod（依存関係）</h3>
+<p>そのModが動くために別途必要なModです。<b>必須</b>と表示されたものが1つでも足りないと、ゲームは起動時にエラーで落ちます。診断結果に「前提Mod不足」と出たら、そのIDのModを配布サイトからダウンロードして <code>mods</code> フォルダに追加してください。</p>
+<h3>MC（対応Minecraftバージョン）</h3>
+<p><code>[1.20.1,1.21)</code> のような表記は「1.20.1以上・1.21未満で動く」という意味です。<code>[26.1.2]</code> なら26.1.2専用。ここに書かれた範囲外のMinecraftで起動すると弾かれます。</p>
+<h3>ローダー</h3>
+<p>Modを動かす土台のことです。Forge用のModはNeoForgeやFabricでは動きません（逆も同様）。複数のローダーのModが混ざっていると、このツールが警告します。</p>
+</div>
+<div data-lang="en">
+<h3>Dependencies</h3>
+<p>Other mods that this mod needs in order to load. If even one <b>required</b> dependency is missing, the game crashes on startup. When the summary reports a missing dependency, download that mod ID from your usual mod site and drop it into your <code>mods</code> folder.</p>
+<h3>MC (supported Minecraft version)</h3>
+<p>A range like <code>[1.20.1,1.21)</code> means "1.20.1 and up, but below 1.21". <code>[26.1.2]</code> means that exact version only. Launching outside the range will be rejected by the loader.</p>
+<h3>Loader</h3>
+<p>The framework that runs the mod. A Forge mod will not run on NeoForge or Fabric, and vice versa. If your files mix loaders, this tool warns you.</p>
+</div>
+
+<h2><span data-lang="ja">よくあるクラッシュと対処</span><span data-lang="en">Common crashes and how to fix them</span></h2>
+<div data-lang="ja">
+<h3>ゲームが起動しない・すぐ落ちる</h3>
+<p>原因の大半は「前提Mod不足」「Minecraftバージョン違い」「ローダー混在」の3つです。導入予定のjarを全部まとめてドロップすれば、この3つを一度に判定できます。</p>
+<h3>Modsフォルダはどこ？</h3>
+<p>Windowsならエクスプローラーのアドレス欄に <code>%appdata%\.minecraft\mods</code> と入力。フォルダが無い場合はローダーを一度起動すると作られます。</p>
+<h3>「Missing or unsupported mandatory dependencies」と出た</h3>
+<p>まさに前提Mod不足のエラーです。画面に出ているMod IDと、このツールの「前提Mod」欄を突き合わせてください。</p>
+<h3>Fabric APIとは？</h3>
+<p>Fabric系Modの大半が必要とする共通ライブラリです。Fabric用Modを入れるならほぼ必須と考えてください（このツールでは共通ライブラリは一覧から省いています）。</p>
+<h3>このツールは安全？</h3>
+<p>解析はすべてブラウザ内のJavaScriptで完結し、jarが外部に送信されることはありません。読み込むのはjar内のテキスト情報（mods.toml / fabric.mod.json など）だけで、プログラム部分は実行しません。</p>
+</div>
+<div data-lang="en">
+<h3>The game won't start / crashes immediately</h3>
+<p>Most startup crashes come down to three things: a missing dependency, a Minecraft version mismatch, or mixed loaders. Drop all the jars you plan to install at once and this tool checks all three together.</p>
+<h3>Where is the mods folder?</h3>
+<p>On Windows, type <code>%appdata%\.minecraft\mods</code> into the Explorer address bar. If it doesn't exist yet, launch your mod loader profile once and it will be created.</p>
+<h3>"Missing or unsupported mandatory dependencies"</h3>
+<p>That is exactly the missing-dependency error. Compare the mod IDs in that message with the Dependencies column here.</p>
+<h3>What is Fabric API?</h3>
+<p>A shared library that most Fabric mods require. Treat it as mandatory when using Fabric mods (this tool omits shared libraries from the dependency list to reduce noise).</p>
+<h3>Is this safe?</h3>
+<p>All parsing happens in your browser with JavaScript, and no jar ever leaves your machine. Only the text metadata inside the jar (mods.toml / fabric.mod.json and friends) is read — no code from the jar is executed.</p>
+</div>
+
+<h2><span data-lang="ja">対応フォーマット</span><span data-lang="en">Supported formats</span></h2>
+<ul>
+  <li data-lang="ja"><b>NeoForge</b> — <code>META-INF/neoforge.mods.toml</code></li>
+  <li data-lang="en"><b>NeoForge</b> — <code>META-INF/neoforge.mods.toml</code></li>
+  <li data-lang="ja"><b>Forge</b> — <code>META-INF/mods.toml</code></li>
+  <li data-lang="en"><b>Forge</b> — <code>META-INF/mods.toml</code></li>
+  <li data-lang="ja"><b>Fabric</b> — <code>fabric.mod.json</code></li>
+  <li data-lang="en"><b>Fabric</b> — <code>fabric.mod.json</code></li>
+  <li data-lang="ja"><b>Quilt</b> — <code>quilt.mod.json</code></li>
+  <li data-lang="en"><b>Quilt</b> — <code>quilt.mod.json</code></li>
+</ul>
+
+</div>
+
+<footer>
+  <span data-lang="ja">© 2026 mami00003 — このツールは非公式です。Minecraft は Mojang Synergies AB の商標です。</span>
+  <span data-lang="en">© 2026 mami00003 — Unofficial tool. Minecraft is a trademark of Mojang Synergies AB.</span>
+</footer>
+</div>
+
+<script>
+/* ---------- i18n ---------- */
+const L = {
+  ja: { none:'前提Modなし（単体で動作）', req:'必須', opt:'任意', unknown:'不明',
+        thDep:'前提Mod', thRange:'バージョン条件', thKind:'種別',
+        noMeta:'Modのメタデータが見つかりません（Mod以外のjar？）', notZip:'ZIP形式ではありません',
+        badComp:'未対応の圧縮形式',
+        sumTitle:(n)=>`診断結果（${n}個のMod）`, allOk:'✔ 問題は見つかりませんでした。この組み合わせなら前提Mod不足はありません',
+        missDep:(m,d,r)=>`<span class="err">✕ 前提Mod不足:</span> <b>${m}</b> には <b>${d}</b> ${r} が必要ですが、ドロップされたjarの中にありません`,
+        mixLoader:(l)=>`<span class="warn">⚠ ローダー混在:</span> ${l} のModが混ざっています。同じプロファイルでは同時に使えません`,
+        mixMc:(v)=>`<span class="warn">⚠ バージョン混在:</span> 対応Minecraftバージョンが ${v} に分かれています。1つのプロファイルには同じバージョン向けのModだけを入れてください`,
+        copied:'コピーしました' },
+  en: { none:'No dependencies (standalone)', req:'required', opt:'optional', unknown:'unknown',
+        thDep:'Dependency', thRange:'Version range', thKind:'Type',
+        noMeta:'No mod metadata found (is this really a mod jar?)', notZip:'Not a ZIP/jar file',
+        badComp:'Unsupported compression method',
+        sumTitle:(n)=>`Diagnosis (${n} mods)`, allOk:'✔ No problems found — nothing is missing in this set',
+        missDep:(m,d,r)=>`<span class="err">✕ Missing dependency:</span> <b>${m}</b> requires <b>${d}</b> ${r}, but it is not among the dropped files`,
+        mixLoader:(l)=>`<span class="warn">⚠ Mixed loaders:</span> you have ${l} mods together. They cannot run in the same profile`,
+        mixMc:(v)=>`<span class="warn">⚠ Mixed Minecraft versions:</span> these mods target ${v}. Keep one profile to a single game version`,
+        copied:'Copied' }
+};
+let lang = (navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en';
+document.documentElement.lang = lang;
+const t = () => L[lang];
+document.getElementById('lang').addEventListener('click', () => {
+  lang = lang === 'ja' ? 'en' : 'ja';
+  document.documentElement.lang = lang;
+  rerender();
+});
+
+/* ---------- minimal ZIP reader (no dependencies, DecompressionStream) ---------- */
+async function readZip(file) {
+  const buf = new Uint8Array(await file.arrayBuffer());
+  const dv = new DataView(buf.buffer);
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65558); i--) {
+    if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error(t().notZip);
+  const count = dv.getUint16(eocd + 10, true);
+  let off = dv.getUint32(eocd + 16, true);
+  const entries = {};
+  const td = new TextDecoder();
+  for (let n = 0; n < count; n++) {
+    if (dv.getUint32(off, true) !== 0x02014b50) break;
+    const method = dv.getUint16(off + 10, true);
+    const csize = dv.getUint32(off + 20, true);
+    const nlen = dv.getUint16(off + 28, true);
+    const elen = dv.getUint16(off + 30, true);
+    const clen = dv.getUint16(off + 32, true);
+    const lho = dv.getUint32(off + 42, true);
+    const name = td.decode(buf.subarray(off + 46, off + 46 + nlen));
+    entries[name] = { method, csize, lho };
+    off += 46 + nlen + elen + clen;
+  }
+  return {
+    has: (n) => n in entries,
+    text: async (n) => {
+      const e = entries[n];
+      if (!e) return null;
+      const nlen2 = dv.getUint16(e.lho + 26, true);
+      const elen2 = dv.getUint16(e.lho + 28, true);
+      const start = e.lho + 30 + nlen2 + elen2;
+      const data = buf.subarray(start, start + e.csize);
+      if (e.method === 0) return td.decode(data);
+      if (e.method === 8) {
+        const ds = new DecompressionStream('deflate-raw');
+        const out = await new Response(new Blob([data]).stream().pipeThrough(ds)).arrayBuffer();
+        return td.decode(out);
+      }
+      throw new Error(t().badComp);
+    }
+  };
+}
+
+const drop = document.getElementById('drop');
+const fileIn = document.getElementById('file');
+const results = document.getElementById('results');
+const summary = document.getElementById('summary');
+const actions = document.getElementById('actions');
+let mods = [];
+let errors = [];
+
+drop.addEventListener('click', () => fileIn.click());
+['dragover','dragenter'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('hover'); }));
+['dragleave','drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('hover'); }));
+drop.addEventListener('drop', ev => handleFiles(ev.dataTransfer.files));
+fileIn.addEventListener('change', () => handleFiles(fileIn.files));
+
+document.getElementById('reset').addEventListener('click', () => {
+  mods = []; errors = []; fileIn.value = ''; rerender();
+});
+document.getElementById('copy').addEventListener('click', async () => {
+  const lines = mods.map(m => `${m.name} [${m.loader}] MC ${m.mc} v${m.version}` +
+    (m.deps.length ? '\n' + m.deps.map(d => `  - ${d.id} ${d.range || ''} (${d.mandatory ? t().req : t().opt})`).join('\n') : ''));
+  await navigator.clipboard.writeText(lines.join('\n'));
+  const b = document.getElementById('copy');
+  const old = b.innerHTML; b.textContent = t().copied;
+  setTimeout(() => { b.innerHTML = old; }, 1400);
+});
+
+async function handleFiles(files) {
+  for (const f of files) {
+    if (!/\.(jar|zip)$/i.test(f.name)) continue;
+    try { await parseJar(f); } catch (e) { errors.push({ name: f.name, msg: e.message }); }
+  }
+  rerender();
+}
+
+function parseToml(txt) {
+  const mod = { deps: [] };
+  const modsBlock = txt.match(/\[\[mods\]\]([\s\S]*?)(?=\n\[\[|$)/);
+  if (modsBlock) {
+    const g = (k) => (modsBlock[1].match(new RegExp(k + '\\s*=\\s*"([^"]*)"')) || [])[1];
+    mod.modId = g('modId'); mod.version = g('version'); mod.name = g('displayName');
+  }
+  const depRe = /\[\[dependencies[^\]]*\]\]([\s\S]*?)(?=\n\[\[|$)/g;
+  let m;
+  while ((m = depRe.exec(txt)) !== null) {
+    const g = (k) => (m[1].match(new RegExp(k + '\\s*=\\s*"([^"]*)"')) || [])[1];
+    const mand = /mandatory\s*=\s*true/.test(m[1]) || /type\s*=\s*"required"/.test(m[1]);
+    mod.deps.push({ id: g('modId'), range: g('versionRange') || '', mandatory: mand });
+  }
+  return mod;
+}
+
+const LIBS = ['minecraft','forge','neoforge','fabricloader','fabric','fabric-api','quilt_loader','quilt_base','java'];
+
+async function parseJar(file) {
+  const zip = await readZip(file);
+  let info = null, loader = null;
+  if (zip.has('META-INF/neoforge.mods.toml')) {
+    info = parseToml(await zip.text('META-INF/neoforge.mods.toml')); loader = 'NeoForge';
+  } else if (zip.has('META-INF/mods.toml')) {
+    info = parseToml(await zip.text('META-INF/mods.toml')); loader = 'Forge';
+  } else if (zip.has('fabric.mod.json')) {
+    const j = JSON.parse(await zip.text('fabric.mod.json'));
+    info = { modId: j.id, version: j.version, name: j.name,
+             deps: Object.entries(j.depends || {}).map(([id, range]) => ({ id, range: String(range), mandatory: true })) };
+    loader = 'Fabric';
+  } else if (zip.has('quilt.mod.json')) {
+    const j = JSON.parse(await zip.text('quilt.mod.json'));
+    const ql = j.quilt_loader || {};
+    info = { modId: ql.id, version: ql.version, name: (ql.metadata||{}).name,
+             deps: (ql.depends||[]).map(d => ({ id: d.id || d, range: d.versions || '', mandatory: true })) };
+    loader = 'Quilt';
+  } else {
+    throw new Error(t().noMeta);
+  }
+  const mcDep = info.deps.find(d => d.id === 'minecraft');
+  mods.push({ file: file.name, name: info.name || info.modId || file.name, modId: info.modId || '?',
+              version: info.version || '?', loader, mc: mcDep ? mcDep.range : null,
+              deps: info.deps.filter(d => !LIBS.includes(d.id)) });
+}
+
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* pull the "1.20" / "26.1" style family out of a version range string */
+function mcFamily(range) {
+  if (!range) return null;
+  const m = String(range).match(/(\d+)\.(\d+)/);
+  return m ? m[1] + '.' + m[2] : null;
+}
+
+function rerender() {
+  results.innerHTML = '';
+  for (const r of mods) {
+    const el = document.createElement('div');
+    el.className = 'mod';
+    const depRows = r.deps.length
+      ? r.deps.map(d => `<tr><td>${esc(d.id)}</td><td>${esc(d.range || 'any')}</td><td class="${d.mandatory ? 'warn' : 'ok'}">${d.mandatory ? t().req : t().opt}</td></tr>`).join('')
+      : `<tr><td colspan="3" class="ok">${t().none}</td></tr>`;
+    el.innerHTML = `<h2>${esc(r.name)}
+        <span class="badge loader">${esc(r.loader)}</span>
+        <span class="badge ver">MC ${esc(r.mc || t().unknown)}</span>
+        <span class="badge">v${esc(r.version)}</span></h2>
+      <div style="color:var(--sub);font-size:.8rem">${esc(r.file)} — modId: ${esc(r.modId)}</div>
+      <table><tr><th>${t().thDep}</th><th>${t().thRange}</th><th>${t().thKind}</th></tr>${depRows}</table>`;
+    results.appendChild(el);
+  }
+  for (const e of errors) {
+    const el = document.createElement('div');
+    el.className = 'mod';
+    el.innerHTML = `<h2 class="err">✕ ${esc(e.name)}</h2><div class="err" style="font-size:.85rem">${esc(e.msg)}</div>`;
+    results.appendChild(el);
+  }
+  renderSummary();
+}
+
+function renderSummary() {
+  if (mods.length < 1) { summary.style.display = 'none'; actions.style.display = 'none'; return; }
+  actions.style.display = 'flex';
+  const ids = new Set(mods.map(m => m.modId));
+  const issues = [];
+  for (const m of mods) for (const d of m.deps) {
+    if (d.mandatory && !ids.has(d.id)) issues.push(t().missDep(esc(m.name), esc(d.id), esc(d.range || '')));
+  }
+  const loaders = [...new Set(mods.map(m => m.loader))];
+  if (loaders.length > 1) issues.push(t().mixLoader(loaders.map(esc).join(' / ')));
+  const fams = [...new Set(mods.map(m => mcFamily(m.mc)).filter(Boolean))];
+  if (fams.length > 1) issues.push(t().mixMc(fams.map(esc).join(' / ')));
+  summary.style.display = 'block';
+  summary.style.borderLeftColor = issues.length ? 'var(--err)' : 'var(--acc)';
+  summary.innerHTML = `<h2>${t().sumTitle(mods.length)}</h2>` +
+    (issues.length ? issues.map(i => `<div>${i}</div>`).join('') : `<div class="ok">${t().allOk}</div>`);
+}
+</script>
+</body>
+</html>
