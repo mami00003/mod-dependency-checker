@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>modsフォルダの場所と、Modの正しい入れ方 | Minecraft Mod Guide</title>
+<meta name="description" content="Windows / macOS / Linux それぞれのmodsフォルダの場所と、ローダーのインストールからModを入れて起動確認するまでの手順。よくある失敗も解説。 / The mods folder location on Windows, macOS and Linux, plus the full install flow and the mistakes people usually make.">
+<meta property="og:title" content="modsフォルダの場所と、Modの正しい入れ方">
+<meta property="og:description" content="Windows / macOS / Linux それぞれのmodsフォルダの場所と、ローダーのインストールからModを入れて起動確認するまでの手順。よくある失敗も解説。">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%235ac46a'/><path d='M8 11h16M8 16h16M8 21h10' stroke='%231a1c22' stroke-width='3' stroke-linecap='round'/></svg>">
+<style>
+:root { --bg:#1a1c22; --card:#242730; --acc:#5ac46a; --warn:#e8b34b; --tx:#e8e8ec; --sub:#9aa0ad; --line:#333a46; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Hiragino Sans","Noto Sans JP",Meiryo,system-ui,sans-serif; background:var(--bg); color:var(--tx); line-height:1.85; }
+.wrap { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
+.topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; }
+.home { color:var(--sub); text-decoration:none; font-size:.85rem; }
+.home:hover { color:var(--acc); }
+.langbtn { background:var(--card); color:var(--sub); border:1px solid var(--line); border-radius:99px; padding:5px 14px; font-size:.8rem; cursor:pointer; font-family:inherit; }
+.langbtn:hover { color:var(--tx); border-color:var(--acc); }
+h1 { font-size:1.55rem; margin:8px 0 6px; line-height:1.4; }
+.meta { color:var(--sub); font-size:.82rem; margin-bottom:24px; }
+h2 { font-size:1.15rem; margin:32px 0 8px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+h3 { font-size:1rem; margin:22px 0 4px; color:var(--acc); }
+p, li { font-size:.94rem; color:#ccd0da; }
+ul, ol { margin:8px 0 8px 24px; }
+li { margin:4px 0; }
+code { background:#2f3440; padding:1px 6px; border-radius:4px; font-size:.86em; }
+pre { background:#14161b; border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; margin:10px 0; }
+pre code { background:none; padding:0; font-size:.82rem; line-height:1.6; }
+table { width:100%; border-collapse:collapse; margin:12px 0; font-size:.9rem; }
+th, td { text-align:left; padding:7px 9px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { color:var(--sub); font-weight:normal; }
+.cta { display:block; background:var(--card); border:1px solid var(--acc); border-radius:12px; padding:16px 18px; margin:28px 0; text-decoration:none; color:var(--tx); }
+.cta:hover { background:#28352b; }
+.cta h3 { color:var(--acc); margin:0 0 2px; }
+.cta span { font-size:.85rem; color:var(--sub); }
+.note { background:var(--card); border-left:3px solid var(--warn); border-radius:8px; padding:10px 14px; margin:14px 0; font-size:.9rem; }
+.more { margin-top:40px; padding-top:16px; border-top:1px solid var(--line); }
+.more a { display:block; color:#8fd39a; text-decoration:none; font-size:.9rem; padding:5px 0; }
+.more a:hover { text-decoration:underline; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--line); color:var(--sub); font-size:.78rem; }
+[data-lang="en"] { display:none; }
+html[lang="en"] [data-lang="en"] { display:revert; }
+html[lang="en"] [data-lang="ja"] { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar">
+  <a class="home" href="../../">&larr; <span data-lang="ja">Mod依存関係チェッカー</span><span data-lang="en">Mod Dependency Checker</span></a>
+  <button class="langbtn" id="lang">English / 日本語</button>
+</div>
+
+<h1><span data-lang="ja">modsフォルダの場所と、Modの正しい入れ方</span><span data-lang="en">Where the mods folder is, and how to install mods correctly</span></h1>
+<p class="meta"><span data-lang="ja">最終更新: 2026年8月</span><span data-lang="en">Last updated: August 2026</span></p>
+
+<p data-lang="ja">Modの導入でつまずく場所は、だいたい「フォルダが見つからない」か「入れる場所を間違えている」です。ここを最初に固めておけば、あとは同じ作業の繰り返しになります。</p>
+<p data-lang="en">Most people who get stuck installing mods are stuck on one of two things: they cannot find the folder, or they put the files in the wrong place. Get this right once and every future install is the same three steps.</p>
+
+<h2><span data-lang="ja">modsフォルダの場所</span><span data-lang="en">Where the mods folder lives</span></h2>
+<table>
+<tr><th>OS</th><th><span data-lang="ja">場所</span><span data-lang="en">Path</span></th></tr>
+<tr><td>Windows</td><td><code>%appdata%\.minecraft\mods</code></td></tr>
+<tr><td>macOS</td><td><code>~/Library/Application Support/minecraft/mods</code></td></tr>
+<tr><td>Linux</td><td><code>~/.minecraft/mods</code></td></tr>
+</table>
+<p data-lang="ja">Windowsではエクスプローラーのアドレス欄に <code>%appdata%\.minecraft</code> と入力してEnterを押すのが最短です。macOSはFinderの「移動 &gt; フォルダへ移動」から上のパスを貼り付けます。</p>
+<p data-lang="en">On Windows, typing <code>%appdata%\.minecraft</code> into the Explorer address bar is the quickest route. On macOS use Finder's "Go &gt; Go to Folder" and paste the path above.</p>
+<div class="note">
+<span data-lang="ja"><b>mods フォルダが無い場合:</b> まだ一度もローダーで起動していないだけです。ローダーをインストールしてそのプロファイルで1回起動すれば自動生成されます。手動で作っても構いません。</span>
+<span data-lang="en"><b>No mods folder?</b> It simply hasn't been created yet. Install a loader and launch that profile once and it appears — or just create the folder yourself.</span>
+</div>
+
+<h2><span data-lang="ja">導入の手順</span><span data-lang="en">The install flow</span></h2>
+<ol>
+<li data-lang="ja"><b>ローダーを入れる</b> — Forge / NeoForge / Fabric の公式サイトからインストーラーを落とし、遊びたいMinecraftバージョンを選んで実行。ランチャーに新しいプロファイルが追加されます</li>
+<li data-lang="en"><b>Install a loader</b> — grab the installer from the Forge / NeoForge / Fabric site, pick the Minecraft version you want, run it. A new profile appears in your launcher</li>
+<li data-lang="ja"><b>一度そのプロファイルで起動する</b> — フォルダ構造が作られ、ローダーが正しく入ったかも確認できます</li>
+<li data-lang="en"><b>Launch that profile once</b> — this creates the folder structure and confirms the loader installed correctly</li>
+<li data-lang="ja"><b>jarをmodsフォルダに入れる</b> — 解凍やリネームは不要。jarのまま置きます</li>
+<li data-lang="en"><b>Drop the jars into mods</b> — do not unzip or rename them; they go in as-is</li>
+<li data-lang="ja"><b>もう一度起動</b> — タイトル画面の「Mods」ボタンで一覧に出ていれば成功です</li>
+<li data-lang="en"><b>Launch again</b> — if they appear under the "Mods" button on the title screen, you're done</li>
+</ol>
+
+<h2><span data-lang="ja">よくある失敗</span><span data-lang="en">Where it usually goes wrong</span></h2>
+<h3 data-lang="ja">jarを解凍してしまう</h3><h3 data-lang="en">Unzipping the jar</h3>
+<p data-lang="ja">jarは圧縮ファイルとして開けてしまうため、つい解凍しがちですが、Modは <b>jarのまま</b> 置く必要があります。解凍したフォルダを入れても認識されません。</p>
+<p data-lang="en">A jar opens like a zip, so people extract it — but mods must stay <b>as jar files</b>. An extracted folder will simply be ignored.</p>
+<h3 data-lang="ja">versionsフォルダやresourcepacksに入れる</h3><h3 data-lang="en">Putting them in versions or resourcepacks</h3>
+<p data-lang="ja">Modは <code>mods</code> だけです。リソースパックやシェーダーは別のフォルダなので混同しないように。</p>
+<p data-lang="en">Mods go in <code>mods</code> and nowhere else. Resource packs and shaders have their own folders.</p>
+<h3 data-lang="ja">バニラのプロファイルで起動する</h3><h3 data-lang="en">Launching the vanilla profile</h3>
+<p data-lang="ja">ランチャーで選ぶプロファイルがローダーのものになっているか確認してください。バニラで起動するとModは一切読み込まれません。</p>
+<p data-lang="en">Make sure the launcher is set to the loader profile. Launching vanilla loads no mods at all.</p>
+<h3 data-lang="ja">古いjarが残っている</h3><h3 data-lang="en">Old jars left behind</h3>
+<p data-lang="ja">Modを更新した時に旧バージョンを消し忘れると、同じModが2つ読み込まれて衝突します。更新時は必ず古い方を削除してください。</p>
+<p data-lang="en">When updating a mod, delete the old jar. Two versions of the same mod in one folder will collide.</p>
+<h3 data-lang="ja">クライアント用とサーバー用を取り違える</h3><h3 data-lang="en">Confusing client and server mods</h3>
+<p data-lang="ja">Modには「クライアント専用」「サーバー専用」「両方必要」の3種類があります。マルチで遊ぶ場合、両方必要なModはサーバー側にも同じjarを入れる必要があります。</p>
+<p data-lang="en">Mods come in three flavours: client-only, server-only, and required on both. For multiplayer, anything marked "required on both" must be installed on the server as well.</p>
+
+
+<a class="cta" href="../../">
+  <h3><span data-lang="ja">入れる前にjarを確認する</span><span data-lang="en">Check your jars before installing</span></h3>
+
+  <span data-lang="ja">jarをドロップするだけで、前提Mod・対応バージョン・ローダーをまとめて確認できます。ブラウザ内で完結、アップロードなし。</span>
+  <span data-lang="en">Drop your jars in and see dependencies, versions and loaders at a glance. Runs in your browser — nothing is uploaded.</span>
+</a>
+
+<div class="more">
+<p style="color:var(--sub);font-size:.85rem;margin-bottom:4px"><span data-lang="ja">ほかの記事</span><span data-lang="en">More guides</span></p>
+<a href="../crash-on-startup/"><span data-lang="ja">Modを入れたらMinecraftが起動しない — 原因の切り分けと直し方</span><span data-lang="en">Minecraft won&#x27;t launch after installing mods — how to find the cause</span></a>
+<a href="../loaders/"><span data-lang="ja">Forge / NeoForge / Fabric / Quilt の違いと選び方</span><span data-lang="en">Forge vs NeoForge vs Fabric vs Quilt — which loader should you use?</span></a>
+<a href="../crash-report/"><span data-lang="ja">クラッシュレポートの読み方 — 原因のModを特定する</span><span data-lang="en">How to read a Minecraft crash report and find the guilty mod</span></a>
+</div>
+
+<footer>
+  <span data-lang="ja">© 2026 mami00003 — このサイトは非公式です。Minecraft は Mojang Synergies AB の商標です。</span>
+  <span data-lang="en">© 2026 mami00003 — Unofficial. Minecraft is a trademark of Mojang Synergies AB.</span>
+</footer>
+</div>
+<script>
+let lang = (navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en';
+document.documentElement.lang = lang;
+document.getElementById('lang').addEventListener('click', () => {
+  lang = lang === 'ja' ? 'en' : 'ja';
+  document.documentElement.lang = lang;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modを入れたらMinecraftが起動しない — 原因の切り分けと直し方 | Minecraft Mod Guide</title>
+<meta name="description" content="Mod導入後にMinecraftが起動しない・すぐ落ちる時の原因を、頻度の高い順に切り分けて直す手順。前提Mod不足、バージョン違い、ローダー混在、メモリ不足まで。 / A practical, ordered checklist for fixing a Minecraft install that crashes on startup after adding mods.">
+<meta property="og:title" content="Modを入れたらMinecraftが起動しない — 原因の切り分けと直し方">
+<meta property="og:description" content="Mod導入後にMinecraftが起動しない・すぐ落ちる時の原因を、頻度の高い順に切り分けて直す手順。前提Mod不足、バージョン違い、ローダー混在、メモリ不足まで。">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%235ac46a'/><path d='M8 11h16M8 16h16M8 21h10' stroke='%231a1c22' stroke-width='3' stroke-linecap='round'/></svg>">
+<style>
+:root { --bg:#1a1c22; --card:#242730; --acc:#5ac46a; --warn:#e8b34b; --tx:#e8e8ec; --sub:#9aa0ad; --line:#333a46; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Hiragino Sans","Noto Sans JP",Meiryo,system-ui,sans-serif; background:var(--bg); color:var(--tx); line-height:1.85; }
+.wrap { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
+.topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; }
+.home { color:var(--sub); text-decoration:none; font-size:.85rem; }
+.home:hover { color:var(--acc); }
+.langbtn { background:var(--card); color:var(--sub); border:1px solid var(--line); border-radius:99px; padding:5px 14px; font-size:.8rem; cursor:pointer; font-family:inherit; }
+.langbtn:hover { color:var(--tx); border-color:var(--acc); }
+h1 { font-size:1.55rem; margin:8px 0 6px; line-height:1.4; }
+.meta { color:var(--sub); font-size:.82rem; margin-bottom:24px; }
+h2 { font-size:1.15rem; margin:32px 0 8px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+h3 { font-size:1rem; margin:22px 0 4px; color:var(--acc); }
+p, li { font-size:.94rem; color:#ccd0da; }
+ul, ol { margin:8px 0 8px 24px; }
+li { margin:4px 0; }
+code { background:#2f3440; padding:1px 6px; border-radius:4px; font-size:.86em; }
+pre { background:#14161b; border:1px solid var(--line); border-radius:8px; padding:12px 14px; overflow-x:auto; margin:10px 0; }
+pre code { background:none; padding:0; font-size:.82rem; line-height:1.6; }
+table { width:100%; border-collapse:collapse; margin:12px 0; font-size:.9rem; }
+th, td { text-align:left; padding:7px 9px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { color:var(--sub); font-weight:normal; }
+.cta { display:block; background:var(--card); border:1px solid var(--acc); border-radius:12px; padding:16px 18px; margin:28px 0; text-decoration:none; color:var(--tx); }
+.cta:hover { background:#28352b; }
+.cta h3 { color:var(--acc); margin:0 0 2px; }
+.cta span { font-size:.85rem; color:var(--sub); }
+.note { background:var(--card); border-left:3px solid var(--warn); border-radius:8px; padding:10px 14px; margin:14px 0; font-size:.9rem; }
+.more { margin-top:40px; padding-top:16px; border-top:1px solid var(--line); }
+.more a { display:block; color:#8fd39a; text-decoration:none; font-size:.9rem; padding:5px 0; }
+.more a:hover { text-decoration:underline; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--line); color:var(--sub); font-size:.78rem; }
+[data-lang="en"] { display:none; }
+html[lang="en"] [data-lang="en"] { display:revert; }
+html[lang="en"] [data-lang="ja"] { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar">
+  <a class="home" href="../../">&larr; <span data-lang="ja">Mod依存関係チェッカー</span><span data-lang="en">Mod Dependency Checker</span></a>
+  <button class="langbtn" id="lang">English / 日本語</button>
+</div>
+
+<h1><span data-lang="ja">Modを入れたらMinecraftが起動しない — 原因の切り分けと直し方</span><span data-lang="en">Minecraft won&#x27;t launch after installing mods — how to find the cause</span></h1>
+<p class="meta"><span data-lang="ja">最終更新: 2026年8月</span><span data-lang="en">Last updated: August 2026</span></p>
+
+<p data-lang="ja">Modを入れた直後にMinecraftが起動しない、あるいは一瞬でランチャーに戻される。これは「何が悪いか分からない」のが一番つらいところです。ただ実際には、原因は数種類に集中しています。<b>頻度の高い順に潰していく</b>のが最短ルートです。</p>
+<p data-lang="en">You add a few mods, hit play, and the game dies before the title screen ever appears. The frustrating part is that nothing tells you which mod did it. In practice though, the causes cluster into a handful of categories — so the fastest route is to <b>rule them out in order of how common they are</b>.</p>
+
+<h2><span data-lang="ja">1. 前提Mod（依存関係）が足りていない</span><span data-lang="en">1. A required dependency is missing</span></h2>
+<p data-lang="ja">断トツで多い原因です。多くのModは単体では動かず、別のModを土台として要求します。Fabric系なら <code>Fabric API</code>、Forge/NeoForge系なら各種ライブラリModがそれにあたります。1つでも欠けていると、ゲームは起動を中断します。</p>
+<p data-lang="en">By far the most common. Many mods do not work alone — they require another mod as a foundation. On Fabric that is almost always <code>Fabric API</code>; on Forge and NeoForge it is usually a library mod. If even one is missing, the loader aborts startup.</p>
+<div class="note">
+<span data-lang="ja"><b>見分け方:</b> エラー画面やログに <code>Missing or unsupported mandatory dependencies</code> や <code>requires ... which is missing</code> と出ていれば確定です。</span>
+<span data-lang="en"><b>How to spot it:</b> the error screen or log says <code>Missing or unsupported mandatory dependencies</code> or <code>requires ... which is missing</code>.</span>
+</div>
+<p data-lang="ja">対処は単純で、足りないModをダウンロードして <code>mods</code> フォルダに追加するだけです。問題は「何が足りないか」を知ることで、これはjarの中のメタデータを読めば起動前に分かります。</p>
+<p data-lang="en">The fix is simple — download the missing mod into your <code>mods</code> folder. The hard part is knowing <em>what</em> is missing, and that information is sitting inside the jar's metadata, readable before you ever launch the game.</p>
+
+<h2><span data-lang="ja">2. Minecraftのバージョンが合っていない</span><span data-lang="en">2. The Minecraft version doesn't match</span></h2>
+<p data-lang="ja">1.20.1用のModを1.21で動かすことはできません。「だいたい近いから動くだろう」は通用せず、マイナーバージョン違いでも弾かれます。複数のModを集めていると、うっかり1本だけ別バージョン向けが混ざるのがよくあるパターンです。</p>
+<p data-lang="en">A mod built for 1.20.1 will not run on 1.21. "Close enough" does not exist here — even a minor version difference is rejected. The classic failure is collecting a dozen mods and having exactly one of them target a different version.</p>
+<p data-lang="ja">配布ページのバージョン表記を信じすぎないことも大事です。同じページで複数バージョンが配布されているので、ダウンロードしたファイルがどれなのかはファイル自体を見るのが確実です。</p>
+<p data-lang="en">Don't rely purely on the download page either: most projects host several versions on the same page, so the only reliable source of truth is the file you actually downloaded.</p>
+
+<h2><span data-lang="ja">3. ローダーが混ざっている</span><span data-lang="en">3. You've mixed loaders</span></h2>
+<p data-lang="ja">Forge用のModはFabricでは動きません。逆も同じです。NeoForgeはForgeから分岐したものですが、これも別物として扱われます。<code>mods</code> フォルダに違う系統のjarが同居していると、多くの場合そのまま起動失敗になります。</p>
+<p data-lang="en">A Forge mod will not load on Fabric, and vice versa. NeoForge is a fork of Forge but is still treated as a separate ecosystem. Mixing families inside one <code>mods</code> folder usually ends in a failed launch.</p>
+
+<h2><span data-lang="ja">4. メモリ不足・Javaのバージョン</span><span data-lang="en">4. Not enough memory, or the wrong Java</span></h2>
+<p data-lang="ja">ここまでで解決しない場合に疑う領域です。Modを大量に入れると必要メモリが増え、割り当てが足りないと起動途中で落ちます。ランチャーの設定から割り当てを増やしてください（目安: 軽量構成で4GB、大型Modpackで8GB以上）。</p>
+<p data-lang="en">Worth checking only after the first three. A large mod list needs more RAM, and an under-allocated instance dies partway through loading. Raise the allocation in your launcher settings — roughly 4 GB for a light setup, 8 GB or more for a big modpack.</p>
+<p data-lang="ja">また、新しいMinecraftほど新しいJavaを要求します。ランチャー同梱のJavaを使っていれば通常は問題ありませんが、自前で入れたJavaを指定している場合はバージョンを確認してください。</p>
+<p data-lang="en">Newer Minecraft versions also require newer Java. If you use the launcher's bundled runtime you are usually fine; if you pointed it at your own Java installation, check the version.</p>
+
+<h2><span data-lang="ja">切り分けの手順</span><span data-lang="en">A workable process</span></h2>
+<ol>
+<li data-lang="ja">導入予定のjarを<b>まとめて</b>チェックし、前提Mod不足・バージョン違い・ローダー混在の3つを先に潰す</li>
+<li data-lang="en">Check <b>all</b> the jars you plan to install at once, and eliminate missing dependencies, version mismatches and mixed loaders up front</li>
+<li data-lang="ja">それでも落ちるなら、Modを半分だけ入れて起動 → 動けば残り半分が原因、と二分探索する</li>
+<li data-lang="en">If it still crashes, install half the mods and launch: if it works, the problem is in the other half. Binary search from there</li>
+<li data-lang="ja">原因のjarが1本に絞れたら、クラッシュレポートでそのModのエラー内容を確認する</li>
+<li data-lang="en">Once you're down to a single jar, open the crash report and read what that mod actually complained about</li>
+</ol>
+
+
+<a class="cta" href="../../">
+  <h3><span data-lang="ja">最初の3つを一度に確認する</span><span data-lang="en">Check the first three causes at once</span></h3>
+
+  <span data-lang="ja">jarをドロップするだけで、前提Mod・対応バージョン・ローダーをまとめて確認できます。ブラウザ内で完結、アップロードなし。</span>
+  <span data-lang="en">Drop your jars in and see dependencies, versions and loaders at a glance. Runs in your browser — nothing is uploaded.</span>
+</a>
+
+<div class="more">
+<p style="color:var(--sub);font-size:.85rem;margin-bottom:4px"><span data-lang="ja">ほかの記事</span><span data-lang="en">More guides</span></p>
+<a href="../loaders/"><span data-lang="ja">Forge / NeoForge / Fabric / Quilt の違いと選び方</span><span data-lang="en">Forge vs NeoForge vs Fabric vs Quilt — which loader should you use?</span></a>
+<a href="../mods-folder/"><span data-lang="ja">modsフォルダの場所と、Modの正しい入れ方</span><span data-lang="en">Where the mods folder is, and how to install mods correctly</span></a>
+<a href="../crash-report/"><span data-lang="ja">クラッシュレポートの読み方 — 原因のModを特定する</span><span data-lang="en">How to read a Minecraft crash report and find the guilty mod</span></a>
+</div>
+
+<footer>
+  <span data-lang="ja">© 2026 mami00003 — このサイトは非公式です。Minecraft は Mojang Synergies AB の商標です。</span>
+  <span data-lang="en">© 2026 mami00003 — Unofficial. Minecraft is a trademark of Mojang Synergies AB.</span>
+</footer>
+</div>
+<script>
+let lang = (navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en';
+document.documentElement.lang = lang;
+document.getElementById('lang').addEventListener('click', () => {
+  lang = lang === 'ja' ? 'en' : 'ja';
+  document.documentElement.lang = lang;
+});
+</script>
+</body>
+</html>
