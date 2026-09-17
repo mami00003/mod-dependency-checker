@@ -11,6 +11,11 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://mami00003.github.io/mod-dependency-checker/capture-trouble/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://mami00003.github.io/mod-dependency-checker/guides/crash-on-startup/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
