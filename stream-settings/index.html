@@ -172,7 +172,19 @@ footer a{color:var(--ink2)}
   .row dd{text-align:left}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.wrap{overflow-x:auto}
+.tbl{width:100%; border-collapse:collapse; margin-top:16px; font-size:14px}
+.tbl th,.tbl td{border-bottom:1px solid var(--line); padding:9px 10px; text-align:left; vertical-align:top}
+.tbl thead th{font-size:12px; letter-spacing:.06em; color:var(--ink3); font-weight:500; white-space:nowrap}
+.tbl th[scope=rowgroup]{font-weight:700; white-space:nowrap; border-right:1px solid var(--line)}
+.tbl th[scope=row]{font-weight:700; white-space:nowrap}
+.tbl th small{font-weight:400; color:var(--ink3); font-size:11.5px}
+.tbl .num{font-family:var(--mono); font-weight:700; text-align:right; white-space:nowrap}
+ul.fixed{margin:16px 0 0; padding-left:20px; font-size:14px; line-height:1.95; color:var(--ink2)}
+ul.fixed b{color:var(--ink)}
+.stamp{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--ink3)}
 </style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"配信のビットレートはいくつにすればいいですか？","acceptedAnswer":{"@type":"Answer","text":"YouTubeに1080p60で送るなら12000 kbps、1080p30なら10000 kbps、720p60なら6000 kbpsが推奨です。Twitchは上限が6000 kbpsなので、回線に余裕があってもそれ以上は上げられません。Kickは8000 kbps、ニコニコ生放送は6000 kbpsが上限です。雑談や作業配信のように動きが少ない内容なら、推奨値の75%程度まで下げても画質は保てます。"}},{"@type":"Question","name":"上り回線がどれくらいあればビットレートを出せますか？","acceptedAnswer":{"@type":"Answer","text":"上り回線のうち配信に使ってよいのは70%程度が目安です。残りは配信以外の通信と、回線が一瞬落ちたときの余裕に充てます。たとえば1080p60でYouTubeの推奨12000 kbpsを出すなら、上りで18Mbps程度は欲しい計算になります。"}},{"@type":"Question","name":"OBSのレート制御はCBRとVBRのどちらにすべきですか？","acceptedAnswer":{"@type":"Answer","text":"配信は必ずCBRです。VBRだと一瞬だけビットレートが跳ね上がり、回線の上限を超えて配信が切れることがあります。キーフレーム間隔は2秒にしてください。0（自動）にしないこと、というのは各社が共通して要求しています。"}},{"@type":"Question","name":"自分のグラフィックボードではOBSのエンコーダに何を選べばいいですか？","acceptedAnswer":{"@type":"Answer","text":"NVIDIAなら「NVIDIA NVENC H.264」でプリセットは P5: Slow（品質重視）、AMDなら「AMD HW H.264 (AVC)」でQuality、Intelなら「QuickSync H.264」でQualityです。グラフィックボードが分からない場合は x264（CPUで処理）のveryfastになりますが、ゲームのフレームレートが落ちやすくなります。"}},{"@type":"Question","name":"OBSの音声ビットレートとサンプリングレートは？","acceptedAnswer":{"@type":"Answer","text":"音声ビットレートは、BGMや効果音が入るなら160 Kbps、声だけの雑談配信なら128 Kbpsで十分です。サンプリングレートは48 kHzにしてください。44.1kHzだと音がズレる配信サイトがあります。"}}]},{"@type":"WebPage","name":"配信のビットレート、結局いくつにすればいいのか","description":"YouTube・Twitch・Kick・ニコニコ生放送の推奨ビットレートと上限、上り回線から逆算した安全圏、OBSの設定値の一覧。","inLanguage":"ja","dateModified":"2026-09-30","citation":["https://support.google.com/youtube/answer/2853702?hl=ja"]}]}</script>
 </head>
 <body>
 
@@ -289,12 +301,77 @@ footer a{color:var(--ink2)}
 <section>
   <h2>配信を始めたあと、だいたい次に必要になるもの</h2>
   <p class="lede">配信そのものはOBSだけで完結します。困るのはそのあと、録画した配信を切り抜いたり、伸びない原因を調べたりする段階です。</p>
-  <div class="tools" id="tools"></div>
+  <div class="tools" id="tools"><div class="tool"><span class="todo">リンク未設定</span><h3>Filmora</h3><p>配信のアーカイブから切り抜きを作るときの定番。買い切りとサブスクの両方があります。</p><span class="cta">紹介リンクを設定してください</span></div><div class="tool"><h3>vidIQ</h3><p>配信アーカイブをYouTubeに残すなら、どの回が見られたかを追うために。無料プランでも数字は見られます。</p><a href="https://vidiq.com/mami00003" rel="sponsored nofollow noopener" target="_blank">公式サイトを見る</a></div><div class="tool"><span class="todo">リンク未設定</span><h3>ElevenLabs</h3><p>切り抜きのナレーションを声を出さずに付けたいとき。日本語の読み上げに対応しています。</p><span class="cta">紹介リンクを設定してください</span></div></div>
 </section>
 
 <p class="lede" style="margin-top:36px">そもそもOBSに映らない・音が入らない場合は → <a href="../capture-trouble/">OBSに映らない・音が入らないときの、疑う順番</a></p>
 
-<footer id="foot"></footer>
+
+<section>
+  <h2 id="table">配信先別 — 推奨ビットレート早見表</h2>
+  <p class="lede">上の計算機は、この表の値を上り回線の安全圏（70%）で頭打ちにしているだけです。回線を気にせず値だけ見たいときはこちらをどうぞ。単位は kbps です。</p>
+  <div class="wrap">
+    <table class="tbl">
+      <thead><tr><th>配信先</th><th>解像度 / fps</th><th>動きの速いゲーム</th><th>雑談・作業配信</th></tr></thead>
+      <tbody>
+        <tr><th scope="rowgroup" rowspan="6">YouTube<br><small>上限 51,000 kbps</small></th><td>1440p (2560×1440) / 60fps</td><td class="num">24,000</td><td class="num">18,000</td></tr>
+        <tr><td>1440p (2560×1440) / 30fps</td><td class="num">15,000</td><td class="num">11,300</td></tr>
+        <tr><td>1080p (1920×1080) / 60fps</td><td class="num">12,000</td><td class="num">9,000</td></tr>
+        <tr><td>1080p (1920×1080) / 30fps</td><td class="num">10,000</td><td class="num">7,500</td></tr>
+        <tr><td>720p (1280×720) / 60fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>720p (1280×720) / 30fps</td><td class="num">4,000</td><td class="num">3,000</td></tr>
+        <tr><th scope="rowgroup" rowspan="6">Twitch<br><small>上限 6,000 kbps</small></th><td>1440p (2560×1440) / 60fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>1440p (2560×1440) / 30fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>1080p (1920×1080) / 60fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>1080p (1920×1080) / 30fps</td><td class="num">4,500</td><td class="num">3,400</td></tr>
+        <tr><td>720p (1280×720) / 60fps</td><td class="num">4,500</td><td class="num">3,400</td></tr>
+        <tr><td>720p (1280×720) / 30fps</td><td class="num">3,000</td><td class="num">2,300</td></tr>
+        <tr><th scope="rowgroup" rowspan="6">Kick<br><small>上限 8,000 kbps</small></th><td>1440p (2560×1440) / 60fps</td><td class="num">8,000</td><td class="num">6,000</td></tr>
+        <tr><td>1440p (2560×1440) / 30fps</td><td class="num">8,000</td><td class="num">6,000</td></tr>
+        <tr><td>1080p (1920×1080) / 60fps</td><td class="num">8,000</td><td class="num">6,000</td></tr>
+        <tr><td>1080p (1920×1080) / 30fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>720p (1280×720) / 60fps</td><td class="num">5,000</td><td class="num">3,800</td></tr>
+        <tr><td>720p (1280×720) / 30fps</td><td class="num">3,500</td><td class="num">2,600</td></tr>
+        <tr><th scope="rowgroup" rowspan="6">ニコニコ生放送<br><small>上限 6,000 kbps</small></th><td>1440p (2560×1440) / 60fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>1440p (2560×1440) / 30fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>1080p (1920×1080) / 60fps</td><td class="num">6,000</td><td class="num">4,500</td></tr>
+        <tr><td>1080p (1920×1080) / 30fps</td><td class="num">5,000</td><td class="num">3,800</td></tr>
+        <tr><td>720p (1280×720) / 60fps</td><td class="num">4,000</td><td class="num">3,000</td></tr>
+        <tr><td>720p (1280×720) / 30fps</td><td class="num">3,000</td><td class="num">2,300</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2 id="enc">グラフィックボード別 — OBSのエンコーダ</h2>
+  <div class="wrap">
+    <table class="tbl">
+      <thead><tr><th>グラフィックボード</th><th>OBSでの表示名</th><th>プリセット</th><th>補足</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">NVIDIA</th><td>NVIDIA NVENC H.264</td><td>P5: Slow（品質重視）</td><td>項目名が「NVIDIA NVENC H.264 (new)」の場合はそちらを選びます。RTX 40番台以降でYouTubeに送るなら NVENC AV1 も選べます。</td></tr>
+        <tr><th scope="row">AMD</th><td>AMD HW H.264 (AVC)</td><td>Quality</td><td>Radeon RX 7000番台以降なら AV1 も選べます。</td></tr>
+        <tr><th scope="row">Intel</th><td>QuickSync H.264</td><td>Quality</td><td>内蔵GPUを使うので、CPUの負荷を上げずに済みます。Arc / 第11世代以降で安定します。</td></tr>
+        <tr><th scope="row">わからない / 内蔵なし</th><td>x264（CPUで処理）</td><td>veryfast</td><td>CPUで処理するため、ゲームのフレームレートが落ちやすくなります。カクつくなら superfast まで下げてください。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2 id="fixed">どの環境でも共通の設定</h2>
+  <ul class="fixed">
+    <li><b>レート制御：CBR</b> — 配信は必ずCBRです。VBRだと一瞬だけ跳ね上がって切れます。</li>
+    <li><b>キーフレーム間隔：2秒</b> — 0（自動）にしないこと。各社が2秒を要求しています。</li>
+    <li><b>音声ビットレート：160 Kbps</b>（BGMや効果音が入る場合）／<b>128 Kbps</b>（声だけの雑談配信）</li>
+    <li><b>サンプリングレート：48 kHz</b> — 設定 → 音声 の一番上。44.1kHzだとズレる配信サイトがあります。</li>
+    <li><b>基本（キャンバス）解像度：モニターと同じ</b> — ここは触りません。</li>
+    <li><b>縮小フィルタ：ランチョス</b> — 文字がにじみにくくなります。</li>
+  </ul>
+  <p class="src">上り回線のうち配信に使ってよいのは<b>70%程度</b>が目安です。残りは配信以外の通信と、回線が一瞬落ちたときの余裕に充てます。</p>
+</section>
+
+<footer id="foot">YouTubeの推奨値は <a href="https://support.google.com/youtube/answer/2853702?hl=ja" target="_blank" rel="noopener">公式ヘルプの「ライブ エンコーダの設定、ビットレート、解像度を選択する」</a> のH.264の値を使っています。Twitch・Kick・ニコニコ生放送は各社が公表している上限と、実務上の推奨値です。<br>上り回線の安全圏を70%としているのは、配信以外の通信と、回線が一瞬落ちたときの余裕のためです。Twitchで配信するなら、本番前に <a href="https://inspector.twitch.tv/" target="_blank" rel="noopener">Twitch Inspector</a> で実際に送れているか確認できます。<br><span style="color:var(--warn)">※ 現在このページの紹介リンクは 2 件が未設定です。</span><br><span class="stamp">最終確認：2026年9月30日</span></footer>
 
 </div>
 
@@ -410,25 +487,7 @@ function render(){
       }).join('') + '</dl></div>';
   }).join('');
 
-  /* ツール（広告枠） */
-  var unset = 0;
-  $("tools").innerHTML = TOOLS.map(function(t){
-    var live = t.url && t.url.length > 0;
-    if (!live) unset++;
-    return '<div class="tool">' +
-      (live ? '' : '<span class="todo">リンク未設定</span>') +
-      '<h3>' + t.name + '</h3><p>' + t.why + '</p>' +
-      (live ? '<a href="' + t.url + '" rel="sponsored nofollow noopener" target="_blank">公式サイトを見る</a>'
-            : '<span class="cta">紹介リンクを設定してください</span>') +
-      '</div>';
-  }).join('');
 
-  $("foot").innerHTML =
-    'YouTubeの推奨値は <a href="https://support.google.com/youtube/answer/2853702?hl=ja" target="_blank" rel="noopener">公式ヘルプの「ライブ エンコーダの設定、ビットレート、解像度を選択する」</a> のH.264の値を使っています。' +
-    'Twitch・Kick・ニコニコ生放送は各社が公表している上限と、実務上の推奨値です。<br>' +
-    '上り回線の安全圏を' + Math.round(SAFE * 100) + '%としているのは、配信以外の通信と、回線が一瞬落ちたときの余裕のためです。' +
-    'Twitchで配信するなら、本番前に <a href="https://inspector.twitch.tv/" target="_blank" rel="noopener">Twitch Inspector</a> で実際に送れているか確認できます。' +
-    (unset ? '<br><span style="color:var(--warn)">※ 現在このページの紹介リンクは ' + unset + ' 件が未設定です。</span>' : '');
 }
 
 function resLabel(r){
